@@ -26,3 +26,4 @@ Preco decimal(10,2) not null
 
 SELECT * FROM Usuario;
 SELECT * FROM Cliente;
+SELECT * FROM Produto;

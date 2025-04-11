@@ -51,7 +51,7 @@ namespace ProjetoEcommerce.Repositorio
             }
         }
 
-        public |Enumerable<Produto> TodosProdutos()
+        public IEnumerable<Produto> TodosProdutos()
         {
             List<Produto> Prodlist = new List<Produto>();
 
@@ -79,6 +79,49 @@ namespace ProjetoEcommerce.Repositorio
                         });
                 }
                 return Prodlist;
+            }
+        }
+
+        public Produto ObterProduto (int codigo)
+        {
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT * from Produto where CodProd = @codigo", conexao);
+
+                cmd.Parameters.AddWithValue("@codigo", codigo);
+
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                MySqlDataReader dr;
+
+                Produto produto = new Produto();
+                dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dr.Read())
+                {
+                    produto.CodProd = Convert.ToInt32(dr["CodProd"]);
+                    produto.Nome = (string)(dr["Nome"]);
+                    produto.Descricao = (string)(dr["Descricao"]);
+                    produto.Quantidade = Convert.ToInt32(dr["Quantidade"]);
+                    produto.Preco = Convert.ToDecimal(dr["Preco"]);
+                }
+                return produto;
+            }
+        }
+
+        public void Excluir(int Id)
+        {
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+
+                MySqlCommand cmd = new MySqlCommand("delete from produto cliente where CodProd=@codigo", conexao);
+
+                cmd.Parameters.AddWithValue("@codigo", Id);
+
+                int i = cmd.ExecuteNonQuery();
+
+                conexao.Close();
             }
         }
     }
